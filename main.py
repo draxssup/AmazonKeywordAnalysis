@@ -3,19 +3,19 @@ from openpyxl.styles import PatternFill
 from openpyxl import load_workbook
 filename = input('Enter name of your file: ')
 df = pd.read_csv(filename+'.csv')
-title = input('Enter Title: ')
-bullet = input('Enter Bullet Points: ')
-srch_term = input('Enter Search Term: ')
+title = input('Enter Title: ').upper()
+bullet = input('Enter Bullet Points: ').upper()
+srch_term = input('Enter Search Term: ').upper()
 df['Highlighted'] = 'NULL'
 score = 0
 for i, x in enumerate(df[df.keys()[0]]):
-    if x in title:
+    if x.upper() in title:
         df.at[i, 'Highlighted'] = 'Title'
         score += df.at[i, 'Search']
-    if x in bullet and x not in title:
+    if x.upper() in bullet and x.upper() not in title:
         df.at[i, 'Highlighted'] = 'Bullet'
         score += df.at[i, 'Search']
-    if x in srch_term and x not in title and x not in bullet:
+    if x.upper() in srch_term and x.upper() not in title and x.upper() not in bullet:
         df.at[i, 'Highlighted'] = 'ST'
         score += df.at[i, 'Search']
 df.at[len(df),'Search'] = score
@@ -29,13 +29,9 @@ for row in ws.iter_rows(min_row=2, max_row=len(df)+1, min_col=1, max_col=len(df.
         highlight_type = df.at[cell.row - 2, 'Highlighted']
         if highlight_type in colors:
             cell.fill = PatternFill(start_color=colors[highlight_type], end_color=colors[highlight_type], fill_type="solid")
-
-
 col_idx = ws.max_column
-
 for row in ws.iter_rows(min_row=1, max_row=ws.max_row, min_col=col_idx, max_col=col_idx):
     for cell in row:
         ws.delete_cols(cell.col_idx)
-
 wb.save(filenm)
 print(f'file saved as {filenm}')
